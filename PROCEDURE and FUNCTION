@@ -1,0 +1,37 @@
+-- Procedure --
+DELIMITER $$
+
+CREATE PROCEDURE GetServicesByPriceRange_v2 (
+    IN min_price DECIMAL(10,2),
+    IN max_price DECIMAL(10,2)
+)
+BEGIN
+    SELECT service_id, service_name, price
+    FROM services
+    WHERE price BETWEEN min_price AND max_price;
+END $$
+
+DELIMITER ;
+--calling a procedure -- 
+CALL GetServicesByPriceRange(100, 500);
+
+-- Function --
+DELIMITER $$
+
+CREATE FUNCTION GetReservationCount(guestId INT)
+RETURNS INT
+DETERMINISTIC
+BEGIN
+    DECLARE total INT;
+
+    SELECT COUNT(*) INTO total
+    FROM Reservations
+    WHERE guest_id = guestId;
+
+    RETURN total;
+END $$
+
+DELIMITER ;
+-- calling a function --
+SELECT g.guest_id, g.name, GetReservationCount(g.guest_id) AS total_reservations
+FROM Guests g;
